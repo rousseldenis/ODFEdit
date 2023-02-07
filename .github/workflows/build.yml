@@ -1,0 +1,26 @@
+name: Build
+
+on: [push]
+
+jobs:
+  build:
+    strategy:
+      matrix:
+        include:
+          - run_on: 'windows-latest'
+          - run_on: 'ubuntu-latest'
+          - run_on: 'macos-latest'
+
+    runs-on: ${{ matrix.run_on }}
+
+    steps:
+    - uses: actions/checkout@v2
+    - uses: actions/setup-python@v2
+      with:
+        python-version: "3.10"
+
+    - run: pip install -r requirements.txt pyinstaller
+    - run: pyinstaller src/OdfEdit.py
+    - uses: actions/upload-artifact@v2
+      with:
+        path: dist/*
